@@ -1,4 +1,4 @@
- PROGRAM_NAME = Flocking simulation
+ PROGRAM_NAME = game
 
  CSTD = c++17
 

@@ -5,7 +5,6 @@ Game::Game()
     window_width = 1000;
     window_height = 800;
     window.create(sf::VideoMode(window_width, window_height), "Window");
-
     window.setFramerateLimit(60);
 }
 
@@ -23,7 +22,18 @@ void Game::Run()
 
 void Game::Init()
 {
-    
+    number_of_boids = 8;
+    boid_size = 20;
+
+    for(int i=0; i<number_of_boids; i++)
+    {
+        sf::CircleShape shape(20, 3);
+        shape.setPosition(window_width/2, window_height/2);
+        shape.setFillColor(sf::Color::Red);
+        shape.setRadius(boid_size);
+
+        bshapes.push_back(shape);
+    }
 }
 
 void Game::HandleInput()
@@ -49,12 +59,10 @@ void Game::Render()
 {
     window.clear();
 
-    sf::RectangleShape shape;
-    shape.setPosition(30, 30);
-    shape.setSize(sf::Vector2f(100, 100));
-    shape.setFillColor(sf::Color::Red);
-   
-    window.draw(shape);
+    for(int i=0; i<number_of_boids; i++)
+    {
+        window.draw(bshapes[i]);
+    }
     window.display();
 }
 
