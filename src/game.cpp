@@ -22,17 +22,15 @@ void Game::Run()
 
 void Game::Init()
 {
-    number_of_boids = 8;
-    boid_size = 20;
-
+    number_of_boids = 30;
     for(int i=0; i<number_of_boids; i++)
     {
-        sf::CircleShape shape(20, 3);
-        shape.setPosition(window_width/2, window_height/2);
-        shape.setFillColor(sf::Color::Red);
-        shape.setRadius(boid_size);
+        int rx = range_random(10, window_width - 10);
+        int ry = range_random(10, window_height - 10);
 
-        bshapes.push_back(shape);
+        Boid new_boid(rx, ry);
+        flock.push_back(new_boid);
+
     }
 }
 
@@ -50,9 +48,11 @@ void Game::HandleInput()
             if(event.key.code == sf::Keyboard::BackSpace)
                 window.close();
             if(event.key.code == sf::Keyboard::X)
-                window.close();
+                window.close();           
         }
     }
+    
+    
 }
 
 void Game::Render()
@@ -61,12 +61,20 @@ void Game::Render()
 
     for(int i=0; i<number_of_boids; i++)
     {
-        window.draw(bshapes[i]);
+        window.draw(flock[i].getDrawable());
     }
     window.display();
 }
 
 void Game::Update()
 {
+    sf::Vector2i pos = sf::Mouse::getPosition(window);
+    pos.x -= window_width/2;
+    pos.y -= window_height/2;
+    for(int i=0; i<number_of_boids; i++)
+    {
+        flock[i].seek(Pvector(pos.x, pos.y));
+        flock[i].update();
 
+    }
 }

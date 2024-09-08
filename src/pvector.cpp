@@ -187,3 +187,10 @@ float Pvector::angleBetween(const Pvector& vec)
     float tmp = acos(ang);
     return tmp;
 }
+
+void Pvector::limit(float maxsp)
+{
+    float m = magnitude();
+    if(m > maxsp)
+        set(x/m, y/m);
+}

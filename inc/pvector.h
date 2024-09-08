@@ -45,6 +45,7 @@ public:
     float magnitude();
     void normalize();
     void setMagnitude(float m);
+    void limit(float maxsp);
 
     float dotProduct(const Pvector& vec);
     float angleBetween(const Pvector& vec);

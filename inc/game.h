@@ -1,6 +1,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "pvector.h"
+#include "utility.h"
+#include "boid.h"
 
 #ifndef GAME_H
 #define GAME_H
@@ -13,9 +15,8 @@ private:
     int window_width;
 
     int number_of_boids;
-    float boid_size;
     
-    std::vector<sf::CircleShape> bshapes;
+    std::vector<Boid> flock;
 
     void HandleInput();
     void Update();

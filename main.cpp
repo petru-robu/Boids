@@ -1,5 +1,6 @@
 #include <iostream>
 #include "inc/game.h"
+#include "inc/utility.h"
 
 int main()
 {
