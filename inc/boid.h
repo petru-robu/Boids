@@ -10,33 +10,44 @@ class Boid
 {
 public:
 
-Pvector location;
-Pvector velocity;
-Pvector acceleration;
+    Pvector location;
+    Pvector velocity;
+    Pvector acceleration;
 
-float maxSpeed;
-float maxForce;
+    float maxSpeed;
+    float maxForce;
 
-float separationFactor;
-float alignmentFactor;
-float cohesionFactor;
+    float separationFactor;
+    float alignmentFactor;
+    float cohesionFactor;
 
-int boidSize;
-sf::CircleShape boid_shape;
+    int boidSize;
+    sf::CircleShape boid_shape;
 
-Boid();
-Boid(float x, float y);
+    Boid();
+    Boid(float x, float y);
 
-void setPosition(float x, float y);
-void setVelocity(float x, float y);
-void setAcceleration(float x, float y);
+    void setPosition(float x, float y);
+    void setVelocity(float x, float y);
+    void setAcceleration(float x, float y);
 
-sf::CircleShape getDrawable();
+    sf::CircleShape getDrawable();
 
-void applyForce(const Pvector& force);
-void seek(const Pvector& target);
-void update();
+    void applyForce(const Pvector& force);
+    Pvector seek(const Pvector& target);
+    Pvector chase(const Pvector& vec);
 
+    Pvector separation(const std::vector<Boid> &flock);
+    Pvector cohesion(const std::vector<Boid> &flock);
+    Pvector alignment(const std::vector<Boid> &flock);
+
+    void flocking(const std::vector<Boid> &flock);
+
+    void avoid();
+    void wrap();
+    void update();
+    void run(const std::vector<Boid> &flock);
+    
 };
 
 

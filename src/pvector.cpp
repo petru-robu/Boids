@@ -192,5 +192,13 @@ void Pvector::limit(float maxsp)
 {
     float m = magnitude();
     if(m > maxsp)
-        set(x/m, y/m);
+    {
+        this->normalize();
+        *this *= maxsp;
+    }
+}
+
+float Pvector::distance(const Pvector& vec)
+{
+    return sqrt((vec.x - x)*(vec.x - x) + (vec.y - y)*(vec.y - y));
 }

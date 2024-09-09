@@ -22,7 +22,7 @@ void Game::Run()
 
 void Game::Init()
 {
-    number_of_boids = 30;
+    number_of_boids = 50;
     for(int i=0; i<number_of_boids; i++)
     {
         int rx = range_random(10, window_width - 10);
@@ -51,8 +51,6 @@ void Game::HandleInput()
                 window.close();           
         }
     }
-    
-    
 }
 
 void Game::Render()
@@ -68,13 +66,30 @@ void Game::Render()
 
 void Game::Update()
 {
-    sf::Vector2i pos = sf::Mouse::getPosition(window);
-    pos.x -= window_width/2;
-    pos.y -= window_height/2;
+    sf::Vector2i pos;
+    pos = sf::Mouse::getPosition(window);
+
+    int flag;
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        flag = 1;
+    else
+        flag = -1;
+
     for(int i=0; i<number_of_boids; i++)
     {
-        flock[i].seek(Pvector(pos.x, pos.y));
-        flock[i].update();
+        if(flag == 1)
+        {
+            Pvector mp(pos.x, pos.y);
+            mp.normalize();
+            float factor = 5;
+            mp *= factor;
 
+            flock[i].velocity += mp;
+        }
+            
+            
+        flock[i].run(flock);
     }
+        
 }

@@ -49,6 +49,7 @@ public:
 
     float dotProduct(const Pvector& vec);
     float angleBetween(const Pvector& vec);
+    float distance(const Pvector& vec);
 
 };
 
