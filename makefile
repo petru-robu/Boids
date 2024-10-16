@@ -1,4 +1,4 @@
- PROGRAM_NAME = game
+ PROGRAM_NAME = BOIDS
 
  CSTD = c++17
 

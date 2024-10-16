@@ -1,34 +1,28 @@
 #include "../inc/boid.h"
 
-#define width 1000
-#define height 800
+#define sim_width 1000
+#define sim_height 800
 
-Boid::Boid()
+Boid::Boid(float x, float y, float* separationFactor, float* alignmentFactor, float* cohesionFactor): 
+separationFactor(separationFactor), alignmentFactor(alignmentFactor), cohesionFactor(cohesionFactor)
 {
     maxSpeed = 3;
     maxForce = 0.05;
 
-    boidSize = 4;
+    boidSize = 5;
 
     acceleration = Pvector(0, 0);
     location = Pvector(0, 0);
     velocity = Pvector(rand()%3-2, rand()%3-2);
-    //velocity = Pvector(0, 0);
     
     boid_shape = sf::CircleShape(20, 3);
     boid_shape.setFillColor(sf::Color::Red);
     boid_shape.setRadius(boidSize);
     boid_shape.setOrigin(10, 0);
 
-    separationFactor = 2;
-    alignmentFactor = 1.5;
-    cohesionFactor = 1.5;
-}
-
-Boid::Boid(float x, float y) : Boid()
-{
     location.x = x;
     location.y = y;
+    
 }
 
 void Boid::setPosition(float x, float y)
@@ -52,34 +46,19 @@ void Boid::applyForce(const Pvector& force)
     acceleration += force;
 }
 
-Pvector Boid::seek(const Pvector& target)
-{
-    Pvector desired;
-    desired = target;
-
-    desired = desired.normalized();
-    desired *= maxSpeed;
-
-    Pvector acc;
-    acc = desired - velocity;
-    acc = acc.limited(maxForce);
-
-    return acc;
-}
-
 void Boid::wrap()
 {
     if (location.x < 0)    
-        location.x += 1000;
+        location.x += sim_width;
     
     if (location.y < 0)    
-        location.y += 800;
+        location.y += sim_height;
     
-    if (location.x >= 1000)
-        location.x -= 1000;
+    if (location.x >= sim_width)
+        location.x -= sim_width;
     
-    if (location.y >= 800) 
-        location.y -= 800;
+    if (location.y >= sim_height) 
+        location.y -= sim_height;
 }
 
 void Boid::update()
@@ -212,17 +191,13 @@ void Boid::flocking(const std::vector<Boid> &flock)
     float fov_alg = 60;
     float fov_coh = 60;
 
-    float separationFactor = 2;
-    float alignmentFactor = 1.5;
-    float cohesionFactor = 1.5;
-
     Pvector sep = separation(flock,fov_sep);
     Pvector alg = alignment(flock, fov_alg);
-    Pvector coh = cohesion(flock,fov_coh);
+    Pvector coh = cohesion(flock, fov_coh);
 
-    sep*=separationFactor;
-    alg*=alignmentFactor;
-    coh*=cohesionFactor;
+    sep*=(*separationFactor);
+    alg*=(*alignmentFactor);
+    coh*=(*cohesionFactor);
     
     applyForce(sep);
     applyForce(alg);

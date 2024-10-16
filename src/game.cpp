@@ -6,6 +6,12 @@ Game::Game()
     window_height = 800;
     window.create(sf::VideoMode(window_width, window_height), "Window");
     window.setFramerateLimit(60);
+
+    separationFactor = 2;
+    alignmentFactor = 1.5;
+    cohesionFactor = 1.5;
+
+    ui = new UI(&separationFactor, &alignmentFactor, &cohesionFactor);
 }
 
 void Game::Run()
@@ -22,13 +28,13 @@ void Game::Run()
 
 void Game::Init()
 {
-    number_of_boids = 150;
+    number_of_boids = 300;
     for(int i=0; i<number_of_boids; i++)
     {
         int rx = range_random(10, window_width - 10);
         int ry = range_random(10, window_height - 10);
 
-        Boid new_boid(rx, ry);
+        Boid new_boid(rx, ry, &separationFactor, &alignmentFactor, &cohesionFactor);
         flock.push_back(new_boid);
 
     }
@@ -49,12 +55,9 @@ void Game::HandleInput()
                 window.close();
             if(event.key.code == sf::Keyboard::X)
                 window.close();           
-            
-            if(event.key.code == sf::Keyboard::W)
-            {
-                flock[0].applyForce(Pvector(1, 0));
-            }
         }
+
+        ui->handleEvent(event, window);
     }
 }
 
@@ -64,6 +67,8 @@ void Game::Render()
 
     for(int i=0; i<number_of_boids; i++)
         flock[i].draw(window);
+
+    ui->draw(window);
     
     window.display();
 }
@@ -80,5 +85,4 @@ void Game::Update()
         if(flock[i].location.x >= 0 && flock[i].location.x <= 1000 && flock[i].location.y >= 0  && flock[i].location.x <= 800)
             cnt++;
     }
-    std::cout<<cnt<<" Boids on screen!\n";
 }

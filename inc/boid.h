@@ -17,15 +17,12 @@ public:
     float maxSpeed;
     float maxForce;
 
-    float separationFactor;
-    float alignmentFactor;
-    float cohesionFactor;
+    float *separationFactor, *alignmentFactor, *cohesionFactor;
 
     int boidSize;
     sf::CircleShape boid_shape;
 
-    Boid();
-    Boid(float x, float y);
+    Boid(float x, float y, float* separationFactor, float* alignmentFactor, float* cohesionFactor);
 
     void setPosition(float x, float y);
     void setVelocity(float x, float y);
@@ -34,8 +31,6 @@ public:
     sf::CircleShape getDrawable();
 
     void applyForce(const Pvector& force);
-    Pvector seek(const Pvector& target);
-    Pvector chase(const Pvector& vec);
     
     Pvector separation(const std::vector<Boid> &flock, float fov);
     Pvector cohesion(const std::vector<Boid> &flock, float fov);
@@ -49,8 +44,5 @@ public:
     void run(const std::vector<Boid> &flock);
     
 };
-
-
-
 
 #endif

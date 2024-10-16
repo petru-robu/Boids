@@ -3,6 +3,7 @@
 #include "pvector.h"
 #include "utility.h"
 #include "boid.h"
+#include "uielements.h"
 
 #ifndef GAME_H
 #define GAME_H
@@ -14,9 +15,13 @@ private:
     int window_height;
     int window_width;
 
+    UI *ui;
+
     int number_of_boids;
-    
     std::vector<Boid> flock;
+    float separationFactor;
+    float alignmentFactor;
+    float cohesionFactor;
 
     void HandleInput();
     void Update();
@@ -28,8 +33,6 @@ public:
     void Run();
 
 };
-
-
 
 
 #endif

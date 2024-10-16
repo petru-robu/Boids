@@ -44,10 +44,10 @@ public:
 
     Pvector& operator=(const Pvector& vec);
 
-    float magnitude();
     Pvector normalized();
     Pvector limited(float maxsp);
-
+    
+    float magnitude();
     float dotProduct(const Pvector& vec);
     float angleBetween(const Pvector& vec);
     float distance(const Pvector& vec);
