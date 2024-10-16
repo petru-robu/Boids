@@ -18,34 +18,35 @@ public:
     void set(float x, float y);
     void set(sf::Vector2f vec);
 
-    Pvector operator+(Pvector const& vec);
+    Pvector operator+(const Pvector& vec);
     Pvector operator+(float scalar);
 
-    Pvector operator-(Pvector const& vec);
+    Pvector operator-(const Pvector&  vec);
     Pvector operator-(float scalar);
 
-    Pvector operator*(Pvector const& vec);
+    Pvector operator*(const Pvector& vec);
     Pvector operator*(float scalar);
 
-    Pvector operator/(Pvector const& vec);
+    Pvector operator/(const Pvector& vec);
     Pvector operator/(float scalar);
 
-    Pvector& operator+=(Pvector const& vec);
+    Pvector& operator+=(const Pvector& vec);
     Pvector& operator+=(float scalar);
 
-    Pvector& operator-=(Pvector const& vec);
+    Pvector& operator-=(const Pvector& vec);
     Pvector& operator-=(float scalar);
 
-    Pvector& operator*=(Pvector const& vec);
+    Pvector& operator*=(const Pvector& vec);
     Pvector& operator*=(float scalar);
 
-    Pvector& operator/=(Pvector const& vec);
+    Pvector& operator/=(const Pvector& vec);
     Pvector& operator/=(float scalar);
 
+    Pvector& operator=(const Pvector& vec);
+
     float magnitude();
-    void normalize();
-    void setMagnitude(float m);
-    void limit(float maxsp);
+    Pvector normalized();
+    Pvector limited(float maxsp);
 
     float dotProduct(const Pvector& vec);
     float angleBetween(const Pvector& vec);

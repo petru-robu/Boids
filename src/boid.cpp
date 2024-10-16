@@ -6,8 +6,9 @@
 Boid::Boid()
 {
     maxSpeed = 2;
-    maxForce = 1.5;
-    boidSize = 8;
+    maxForce = 0.05;
+
+    boidSize = 4;
 
     acceleration = Pvector(0, 0);
     location = Pvector(0, 0);
@@ -19,9 +20,9 @@ Boid::Boid()
     boid_shape.setRadius(boidSize);
     boid_shape.setOrigin(10, 0);
 
-    separationFactor = 1;
-    alignmentFactor = 2;
-    cohesionFactor = 2;
+    separationFactor = 0;
+    alignmentFactor = 0;
+    cohesionFactor = 0;
 }
 
 Boid::Boid(float x, float y) : Boid()
@@ -46,7 +47,6 @@ void Boid::setAcceleration(float x, float y)
     acceleration.y = y;
 }
 
-
 void Boid::applyForce(const Pvector& force)
 {
     acceleration += force;
@@ -57,12 +57,12 @@ Pvector Boid::seek(const Pvector& target)
     Pvector desired;
     desired = target;
 
-    desired.normalize();
+    desired = desired.normalized();
     desired *= maxSpeed;
 
     Pvector acc;
     acc = desired - velocity;
-    acc.limit(maxForce);
+    acc = acc.limited(maxForce);
 
     return acc;
 }
@@ -70,33 +70,35 @@ Pvector Boid::seek(const Pvector& target)
 void Boid::wrap()
 {
     if (location.x < 0)    
-        location.x += 1000;
+        location.x = 1000;
     
     if (location.y < 0)    
-        location.y += 800;
+        location.y = 800;
     
     if (location.x > 1000)
-        location.x -= 1000;
+        location.x = 0;
     
     if (location.y > 800) 
-        location.y -= 800;
+        location.y -= 0;
 }
 
 void Boid::update()
 {
-    acceleration *= 0.5;
-
     velocity += acceleration;
-    velocity.limit(maxSpeed);
+    velocity = velocity.limited(maxSpeed);
 
     location += velocity;
 
-    acceleration *= 0;
+    acceleration *= 0;   
 
     float angle = (float)(atan2(velocity.x, -velocity.y) * 180 / PI);
-    //boid_shape.setRotation(angle);
+    boid_shape.setRotation(angle);
+}
 
+void Boid::draw(sf::RenderWindow &window)
+{
     boid_shape.setPosition(sf::Vector2f(location.x, location.y));
+    window.draw(boid_shape);
 }
 
 sf::CircleShape Boid::getDrawable()
@@ -107,7 +109,7 @@ sf::CircleShape Boid::getDrawable()
 Pvector Boid::separation(const std::vector<Boid> &flock)
 {
     float fov = 20, cnt = 0;
-    Pvector ans(0, 0);
+    Pvector steer(0, 0);
 
     for(int i=0; i<flock.size(); i++)
     {
@@ -117,27 +119,26 @@ Pvector Boid::separation(const std::vector<Boid> &flock)
         {
             Pvector dir;
             dir = location - flock[i].location;
-            dir.normalize();
-            dir /= d;
-
-            ans += dir;
+            
+            dir = dir.normalized();
+            steer = steer + dir / d;
 
             cnt++;
         }
     }
 
     if(cnt > 0)
-        ans /= cnt;
+        steer/= cnt;
 
-    if(ans.magnitude() > 0)
+    if(steer.magnitude() > 0)
     {
-        ans.normalize();
-        ans *= maxSpeed;
-        ans -= velocity;
-        ans.limit(maxForce);
+        steer = steer.normalized();
+        steer *= maxSpeed;
+        steer -= velocity;
+        steer = steer.limited(maxForce);
     }
 
-    return ans;
+    return steer;
 }
 
 Pvector Boid::alignment(const std::vector<Boid> &flock)
@@ -159,12 +160,12 @@ Pvector Boid::alignment(const std::vector<Boid> &flock)
     if(cnt > 0)
     {
         avg /= cnt;
-        avg.normalize();
+        avg = avg.normalized();
         avg *= maxSpeed;
 
         Pvector dir;
         dir = avg - velocity;
-        dir.limit(maxForce);
+        dir = dir.limited(maxForce);
         return dir;
     }
     else
@@ -217,15 +218,4 @@ void Boid::run(const std::vector<Boid> &flock)
     flocking(flock);
     wrap(); 
     update();
-}
-
-Pvector Boid::chase(const Pvector& vec)
-{
-    Pvector target = vec;
-    Pvector diff = target - location;
-
-    diff.normalize();
-    diff *= maxSpeed;
-
-    return diff;
 }

@@ -36,14 +36,14 @@ public:
     void applyForce(const Pvector& force);
     Pvector seek(const Pvector& target);
     Pvector chase(const Pvector& vec);
-
+    
     Pvector separation(const std::vector<Boid> &flock);
     Pvector cohesion(const std::vector<Boid> &flock);
     Pvector alignment(const std::vector<Boid> &flock);
 
     void flocking(const std::vector<Boid> &flock);
 
-    void avoid();
+    void draw(sf::RenderWindow &window);
     void wrap();
     void update();
     void run(const std::vector<Boid> &flock);

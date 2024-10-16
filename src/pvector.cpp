@@ -16,7 +16,7 @@ void Pvector::set(sf::Vector2f vec)
     y = vec.y;
 }
 
-Pvector Pvector::operator+(Pvector const& vec)
+Pvector Pvector::operator+(const Pvector& vec)
 {
     Pvector ans;
     ans.x = x + vec.x;
@@ -33,7 +33,7 @@ Pvector Pvector::operator+(float scalar)
     return ans;
 }
 
-Pvector Pvector::operator-(Pvector const& vec)
+Pvector Pvector::operator-(const Pvector& vec)
 {
     Pvector ans;
     ans.x = x - vec.x;
@@ -50,7 +50,7 @@ Pvector Pvector::operator-(float scalar)
     return ans;
 }
 
-Pvector Pvector::operator*(Pvector const& vec)
+Pvector Pvector::operator*(const Pvector& vec)
 {
     Pvector ans;
     ans.x = x * vec.x;
@@ -67,7 +67,7 @@ Pvector Pvector::operator*(float scalar)
     return ans;
 }
 
-Pvector Pvector::operator/(Pvector const& vec)
+Pvector Pvector::operator/(const Pvector& vec)
 {
     Pvector ans;
     ans.x = x / vec.x;
@@ -84,7 +84,7 @@ Pvector Pvector::operator/(float scalar)
     return ans;
 }
 
-Pvector& Pvector::operator+=(Pvector const& vec)
+Pvector& Pvector::operator+=(const Pvector& vec)
 {
     x += vec.x;
     y += vec.y;
@@ -99,7 +99,7 @@ Pvector& Pvector::operator+=(float scalar)
     return *this;
 }
 
-Pvector& Pvector::operator-=(Pvector const& vec)
+Pvector& Pvector::operator-=(const Pvector& vec)
 {
     x -= vec.x;
     y -= vec.y;
@@ -114,7 +114,7 @@ Pvector& Pvector::operator-=(float scalar)
     return *this;
 }
 
-Pvector& Pvector::operator*=(Pvector const& vec)
+Pvector& Pvector::operator*=(const Pvector& vec)
 {
     x *= vec.x;
     y *= vec.y;
@@ -129,7 +129,7 @@ Pvector& Pvector::operator*=(float scalar)
     return *this;
 }
 
-Pvector& Pvector::operator/=(Pvector const& vec)
+Pvector& Pvector::operator/=(const Pvector& vec)
 {
     x /= vec.x;
     y /= vec.y;
@@ -144,22 +144,37 @@ Pvector& Pvector::operator/=(float scalar)
     return *this;
 }
 
+Pvector& Pvector::operator=(const Pvector& vec)
+{
+
+    if(this != &vec)
+    {
+        x = vec.x;
+        y = vec.y;
+    }
+    return *this;
+}
+
 float Pvector::magnitude()
 {
     return sqrt(x*x + y*y);
 }
 
-void Pvector::normalize()
+Pvector Pvector::normalized()
 {
-    float m = magnitude();
-    if(m > 0)
-        *this = *this / m;
+    Pvector ans(0, 0);
+    float m = sqrt(x*x + y*y);
+    if(m>0)
+        ans = *this/m;
+    else
+        return ans;
 }
 
-void Pvector::setMagnitude(float m)
+Pvector Pvector::limited(float maxsp)
 {
-    normalize();
-    *this = *this * m;
+    float m = sqrt(x*x + y*y);
+    if(m>maxsp)
+        return normalized() * maxsp;
 }
 
 float Pvector::dotProduct(const Pvector& vec)
@@ -186,16 +201,6 @@ float Pvector::angleBetween(const Pvector& vec)
     
     float tmp = acos(ang);
     return tmp;
-}
-
-void Pvector::limit(float maxsp)
-{
-    float m = magnitude();
-    if(m > maxsp)
-    {
-        this->normalize();
-        *this *= maxsp;
-    }
 }
 
 float Pvector::distance(const Pvector& vec)

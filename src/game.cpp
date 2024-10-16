@@ -22,7 +22,7 @@ void Game::Run()
 
 void Game::Init()
 {
-    number_of_boids = 50;
+    number_of_boids = 75;
     for(int i=0; i<number_of_boids; i++)
     {
         int rx = range_random(10, window_width - 10);
@@ -49,6 +49,11 @@ void Game::HandleInput()
                 window.close();
             if(event.key.code == sf::Keyboard::X)
                 window.close();           
+            
+            if(event.key.code == sf::Keyboard::W)
+            {
+                flock[0].applyForce(Pvector(1, 0));
+            }
         }
     }
 }
@@ -58,9 +63,8 @@ void Game::Render()
     window.clear();
 
     for(int i=0; i<number_of_boids; i++)
-    {
-        window.draw(flock[i].getDrawable());
-    }
+        flock[i].draw(window);
+    
     window.display();
 }
 
@@ -69,26 +73,8 @@ void Game::Update()
     sf::Vector2i pos;
     pos = sf::Mouse::getPosition(window);
 
-    int flag;
-
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        flag = 1;
-    else
-        flag = -1;
-
     for(int i=0; i<number_of_boids; i++)
-    {
-        if(flag == 1)
-        {
-            Pvector mp(pos.x, pos.y);
-            mp.normalize();
-            float factor = 5;
-            mp *= factor;
-
-            flock[i].velocity += mp;
-        }
-            
-            
+    {              
         flock[i].run(flock);
     }
         
