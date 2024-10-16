@@ -166,15 +166,16 @@ Pvector Pvector::normalized()
     float m = sqrt(x*x + y*y);
     if(m>0)
         ans = *this/m;
-    else
-        return ans;
+    return ans;
 }
 
 Pvector Pvector::limited(float maxsp)
 {
     float m = sqrt(x*x + y*y);
     if(m>maxsp)
-        return normalized() * maxsp;
+        return *this / m * maxsp;
+    
+    return *this;
 }
 
 float Pvector::dotProduct(const Pvector& vec)

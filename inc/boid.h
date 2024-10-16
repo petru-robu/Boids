@@ -37,9 +37,9 @@ public:
     Pvector seek(const Pvector& target);
     Pvector chase(const Pvector& vec);
     
-    Pvector separation(const std::vector<Boid> &flock);
-    Pvector cohesion(const std::vector<Boid> &flock);
-    Pvector alignment(const std::vector<Boid> &flock);
+    Pvector separation(const std::vector<Boid> &flock, float fov);
+    Pvector cohesion(const std::vector<Boid> &flock, float fov);
+    Pvector alignment(const std::vector<Boid> &flock, float fov);
 
     void flocking(const std::vector<Boid> &flock);
 

@@ -22,7 +22,7 @@ void Game::Run()
 
 void Game::Init()
 {
-    number_of_boids = 75;
+    number_of_boids = 150;
     for(int i=0; i<number_of_boids; i++)
     {
         int rx = range_random(10, window_width - 10);
@@ -73,9 +73,12 @@ void Game::Update()
     sf::Vector2i pos;
     pos = sf::Mouse::getPosition(window);
 
+    int cnt = 0;
     for(int i=0; i<number_of_boids; i++)
     {              
         flock[i].run(flock);
+        if(flock[i].location.x >= 0 && flock[i].location.x <= 1000 && flock[i].location.y >= 0  && flock[i].location.x <= 800)
+            cnt++;
     }
-        
+    std::cout<<cnt<<" Boids on screen!\n";
 }

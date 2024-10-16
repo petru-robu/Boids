@@ -5,7 +5,7 @@
 
 Boid::Boid()
 {
-    maxSpeed = 2;
+    maxSpeed = 3;
     maxForce = 0.05;
 
     boidSize = 4;
@@ -20,9 +20,9 @@ Boid::Boid()
     boid_shape.setRadius(boidSize);
     boid_shape.setOrigin(10, 0);
 
-    separationFactor = 0;
-    alignmentFactor = 0;
-    cohesionFactor = 0;
+    separationFactor = 2;
+    alignmentFactor = 1.5;
+    cohesionFactor = 1.5;
 }
 
 Boid::Boid(float x, float y) : Boid()
@@ -70,16 +70,16 @@ Pvector Boid::seek(const Pvector& target)
 void Boid::wrap()
 {
     if (location.x < 0)    
-        location.x = 1000;
+        location.x += 1000;
     
     if (location.y < 0)    
-        location.y = 800;
+        location.y += 800;
     
-    if (location.x > 1000)
-        location.x = 0;
+    if (location.x >= 1000)
+        location.x -= 1000;
     
-    if (location.y > 800) 
-        location.y -= 0;
+    if (location.y >= 800) 
+        location.y -= 800;
 }
 
 void Boid::update()
@@ -106,9 +106,9 @@ sf::CircleShape Boid::getDrawable()
     return boid_shape;
 }
 
-Pvector Boid::separation(const std::vector<Boid> &flock)
+Pvector Boid::separation(const std::vector<Boid> &flock, float fov)
 {
-    float fov = 20, cnt = 0;
+    float cnt = 0;
     Pvector steer(0, 0);
 
     for(int i=0; i<flock.size(); i++)
@@ -141,9 +141,9 @@ Pvector Boid::separation(const std::vector<Boid> &flock)
     return steer;
 }
 
-Pvector Boid::alignment(const std::vector<Boid> &flock)
+Pvector Boid::alignment(const std::vector<Boid> &flock, float fov)
 {
-    float fov = 60, cnt = 0;
+    float cnt = 0;
     Pvector avg(0, 0);
 
     for(int i=0; i<flock.size(); i++)
@@ -168,14 +168,14 @@ Pvector Boid::alignment(const std::vector<Boid> &flock)
         dir = dir.limited(maxForce);
         return dir;
     }
-    else
-        return Pvector(0,0);
+
+    return Pvector(0,0);
 
 }
 
-Pvector Boid::cohesion(const std::vector<Boid> &flock)
+Pvector Boid::cohesion(const std::vector<Boid> &flock, float fov)
 {
-    float fov = 60, cnt = 0;
+    float cnt = 0;
     Pvector avg(0, 0);
 
     for(int i=0; i<flock.size(); i++)
@@ -192,17 +192,33 @@ Pvector Boid::cohesion(const std::vector<Boid> &flock)
     if(cnt > 0)
     {
         avg /= cnt;
-        return seek(avg);
+
+        Pvector dir;
+        dir = avg - location;
+        dir = dir.normalized();
+        dir*=maxSpeed;
+
+        Pvector steer;
+        steer = dir - velocity;
+        steer = steer.limited(maxForce);
+        return steer;
     }
-    else
-        return Pvector(0, 0);
+    return Pvector(0, 0);
 }
 
 void Boid::flocking(const std::vector<Boid> &flock)
 {
-    Pvector sep = separation(flock);
-    Pvector alg = alignment(flock);
-    Pvector coh = cohesion(flock);
+    float fov_sep = 20;
+    float fov_alg = 60;
+    float fov_coh = 60;
+
+    float separationFactor = 2;
+    float alignmentFactor = 1.5;
+    float cohesionFactor = 1.5;
+
+    Pvector sep = separation(flock,fov_sep);
+    Pvector alg = alignment(flock, fov_alg);
+    Pvector coh = cohesion(flock,fov_coh);
 
     sep*=separationFactor;
     alg*=alignmentFactor;
