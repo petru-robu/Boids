@@ -4,6 +4,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include <cstdlib>
+#include <ctime>
 #include <random>
 #define PI 3.14159
 

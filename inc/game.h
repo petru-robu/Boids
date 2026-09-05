@@ -1,5 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <memory>
+#include <vector>
 #include "pvector.h"
 #include "utility.h"
 #include "boid.h"
@@ -15,7 +17,7 @@ private:
     int window_height;
     int window_width;
 
-    UI *ui;
+    std::unique_ptr<UI> ui;
 
     int number_of_boids;
     std::vector<Boid> flock;

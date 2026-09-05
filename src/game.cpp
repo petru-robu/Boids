@@ -1,17 +1,19 @@
 #include "../inc/game.h"
 
+#include <memory>
+
 Game::Game()
 {
     window_width = 1000;
     window_height = 800;
-    window.create(sf::VideoMode(window_width, window_height), "Window");
+    window.create(sf::VideoMode({static_cast<unsigned int>(window_width), static_cast<unsigned int>(window_height)}), "Window");
     window.setFramerateLimit(60);
 
     separationFactor = 2;
     alignmentFactor = 1.5;
     cohesionFactor = 1.5;
 
-    ui = new UI(&separationFactor, &alignmentFactor, &cohesionFactor);
+    ui = std::make_unique<UI>(&separationFactor, &alignmentFactor, &cohesionFactor);
 }
 
 void Game::Run()
@@ -34,30 +36,29 @@ void Game::Init()
         int rx = range_random(10, window_width - 10);
         int ry = range_random(10, window_height - 10);
 
-        Boid new_boid(rx, ry, &separationFactor, &alignmentFactor, &cohesionFactor);
-        flock.push_back(new_boid);
+        flock.emplace_back(rx, ry, &separationFactor, &alignmentFactor, &cohesionFactor);
 
     }
 }
 
 void Game::HandleInput()
 {
-    sf::Event event;
-    while (window.pollEvent(event)) 
+    while (const auto event = window.pollEvent()) 
     {
-        if(event.type == sf::Event::Closed)
+        if(event->is<sf::Event::Closed>())
             window.close();
-        if(event.type == sf::Event::KeyPressed)
+
+        if(const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
         {
-            if(event.key.code == sf::Keyboard::Escape)
+            if(keyPressed->code == sf::Keyboard::Key::Escape)
                 window.close();
-            if(event.key.code == sf::Keyboard::BackSpace)
+            if(keyPressed->code == sf::Keyboard::Key::Backspace)
                 window.close();
-            if(event.key.code == sf::Keyboard::X)
+            if(keyPressed->code == sf::Keyboard::Key::X)
                 window.close();           
         }
 
-        ui->handleEvent(event, window);
+        ui->handleEvent(*event, window);
     }
 }
 
@@ -75,14 +76,6 @@ void Game::Render()
 
 void Game::Update()
 {
-    sf::Vector2i pos;
-    pos = sf::Mouse::getPosition(window);
-
-    int cnt = 0;
     for(int i=0; i<number_of_boids; i++)
-    {              
         flock[i].run(flock);
-        if(flock[i].location.x >= 0 && flock[i].location.x <= 1000 && flock[i].location.y >= 0  && flock[i].location.x <= 800)
-            cnt++;
-    }
 }

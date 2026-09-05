@@ -1,8 +1,10 @@
 #ifndef UI_H
 #define UI_H
 
+#include <algorithm>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <memory>
 #include <string>
 
 
@@ -35,7 +37,7 @@ private:
 public:
     Slider(float x, float y, float width, float minValue, float maxValue, float* var);
 
-    void handleEvent(sf::Event& event, sf::RenderWindow& window);
+    void handleEvent(const sf::Event& event, sf::RenderWindow& window);
     void draw(sf::RenderWindow& window);
 };
 
@@ -43,12 +45,12 @@ public:
 class UI
 {
 private:
-    Slider *s1, *s2, *s3;
+    std::unique_ptr<Slider> s1, s2, s3;
 
 public:
     UI(float *sep, float *ali, float *coh);
     void draw(sf::RenderWindow& window);
-    void handleEvent(sf::Event& event, sf::RenderWindow& window);
+    void handleEvent(const sf::Event& event, sf::RenderWindow& window);
 };
 
 

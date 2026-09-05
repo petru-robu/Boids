@@ -1,8 +1,9 @@
 #include "../inc/pvector.h"
 
-Pvector::Pvector(){}
+Pvector::Pvector(): x(0), y(0) {}
 Pvector::Pvector(float x, float y): x(x), y(y) {}
 Pvector::Pvector(sf::Vector2f vec): x(vec.x), y(vec.y) {}
+Pvector::Pvector(const Pvector& vec) = default;
 
 void Pvector::set(float x, float y)
 {

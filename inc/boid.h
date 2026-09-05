@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "pvector.h"
 #include "utility.h"
 
