@@ -18,7 +18,7 @@ separationFactor(separationFactor), alignmentFactor(alignmentFactor), cohesionFa
     boid_shape = sf::CircleShape(20, 3);
     boid_shape.setFillColor(sf::Color::Red);
     boid_shape.setRadius(boidSize);
-    boid_shape.setOrigin(10, 0);
+    boid_shape.setOrigin({10, 0});
 
     location.x = x;
     location.y = y;
@@ -71,12 +71,12 @@ void Boid::update()
     acceleration *= 0;   
 
     float angle = (float)(atan2(velocity.x, -velocity.y) * 180 / PI);
-    boid_shape.setRotation(angle);
+    boid_shape.setRotation(sf::degrees(angle));
 }
 
 void Boid::draw(sf::RenderWindow &window)
 {
-    boid_shape.setPosition(sf::Vector2f(location.x, location.y));
+    boid_shape.setPosition({location.x, location.y});
     window.draw(boid_shape);
 }
 
@@ -90,14 +90,14 @@ Pvector Boid::separation(const std::vector<Boid> &flock, float fov)
     float cnt = 0;
     Pvector steer(0, 0);
 
-    for(int i=0; i<flock.size(); i++)
+    for(const Boid& boid : flock)
     {
-        float d = location.distance(flock[i].location);
+        float d = location.distance(boid.location);
         
         if(d > 0 && d < fov)
         {
             Pvector dir;
-            dir = location - flock[i].location;
+            dir = location - boid.location;
             
             dir = dir.normalized();
             steer = steer + dir / d;
@@ -125,13 +125,13 @@ Pvector Boid::alignment(const std::vector<Boid> &flock, float fov)
     float cnt = 0;
     Pvector avg(0, 0);
 
-    for(int i=0; i<flock.size(); i++)
+    for(const Boid& boid : flock)
     {
-        float d = location.distance(flock[i].location);
+        float d = location.distance(boid.location);
         
         if(d > 0 && d < fov)
         {
-            avg += flock[i].velocity;
+            avg += boid.velocity;
             cnt++;
         }
     }
@@ -157,13 +157,13 @@ Pvector Boid::cohesion(const std::vector<Boid> &flock, float fov)
     float cnt = 0;
     Pvector avg(0, 0);
 
-    for(int i=0; i<flock.size(); i++)
+    for(const Boid& boid : flock)
     {
-        float d = location.distance(flock[i].location);
+        float d = location.distance(boid.location);
         
         if(d > 0 && d < fov)
         {
-            avg += flock[i].location;
+            avg += boid.location;
             cnt++;
         }
     }

@@ -14,6 +14,7 @@ public:
     Pvector();
     Pvector(float x, float y);
     Pvector(sf::Vector2f vec);
+    Pvector(const Pvector& vec);
 
     void set(float x, float y);
     void set(sf::Vector2f vec);

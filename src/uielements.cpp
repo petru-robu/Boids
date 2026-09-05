@@ -1,24 +1,24 @@
 #include "../inc/uielements.h"
 
+#include <memory>
+
 //Label
-Label::Label(float x, float y, std::string s, float size, bool trans): x(x), y(y), str(s), size(size)
+Label::Label(float x, float y, std::string s, float size, bool trans):
+    x(x), y(y), size(size), str(s), trans(trans), text(font, s, static_cast<unsigned int>(size))
 {
-    if(!font.loadFromFile("./res/arial.ttf"))
+    if(!font.openFromFile("./res/arial.ttf"))
     {
         std::cout<<"Missing font!\n";
     }
 
-    text.setFont(font);
-    text.setString(s);
-    text.setCharacterSize(size);
     text.setFillColor(sf::Color::White);
-    text.setPosition(sf::Vector2f(x+size/4, y));
+    text.setPosition({x+size/4, y});
 
     if(!trans)
     {
         sf::FloatRect fr = text.getLocalBounds();
-        rect.setPosition(sf::Vector2f(x,y));
-        rect.setSize(sf::Vector2f(fr.width+size/2, fr.height+size/2));
+        rect.setPosition({x, y});
+        rect.setSize({fr.size.x+size/2, fr.size.y+size/2});
         rect.setFillColor(sf::Color::Blue);
     }
 }
@@ -34,22 +34,22 @@ void Label::draw(sf::RenderWindow& window)
 Slider::Slider(float x, float y, float width, float minValue, float maxValue, float* var):
     minValue(minValue), maxValue(maxValue), variableValue(var)
     {
-        track.setPosition(x, y);
-        track.setSize(sf::Vector2f(width, 3));
+        track.setPosition({x, y});
+        track.setSize({width, 3});
         track.setFillColor(sf::Color::White);
 
         knob.setRadius(6);
         knob.setFillColor(sf::Color::White);
-        knob.setPosition(sf::Vector2f(x, y-5));
+        knob.setPosition({x, y-5});
     }
 
-void Slider::handleEvent(sf::Event& event, sf::RenderWindow& window)
+void Slider::handleEvent(const sf::Event& event, sf::RenderWindow& window)
 {
-    if(event.type == sf::Event::MouseButtonPressed)
+    if(const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
     {
-        if(event.mouseButton.button == sf::Mouse::Left)
+        if(mouseButtonPressed->button == sf::Mouse::Button::Left)
         {
-            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonPressed->position);
             if(knob.getGlobalBounds().contains(mousePos))
             {
                 dragging = 1;
@@ -58,21 +58,22 @@ void Slider::handleEvent(sf::Event& event, sf::RenderWindow& window)
         }
         
     }
-    if(event.type == sf::Event::MouseButtonReleased)
+
+    if(const auto* mouseButtonReleased = event.getIf<sf::Event::MouseButtonReleased>())
     {
-        if(event.mouseButton.button == sf::Mouse::Left)
+        if(mouseButtonReleased->button == sf::Mouse::Button::Left)
             dragging = 0;
     }
 
-    if(event.type == sf::Event::MouseMoved && dragging)
+    if(const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>(); mouseMoved && dragging)
     {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
         {
-            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            sf::Vector2f mousePos = window.mapPixelToCoords(mouseMoved->position);
             float newX = std::clamp(mousePos.x, track.getPosition().x, 
                                     track.getPosition().x + track.getSize().x);
 
-            knob.setPosition(newX, knob.getPosition().y);
+            knob.setPosition({newX, knob.getPosition().y});
             float ratio = (newX - track.getPosition().x) / track.getSize().x;
             *variableValue = minValue + ratio * (maxValue - minValue);
         }
@@ -88,12 +89,12 @@ void Slider::draw(sf::RenderWindow& window)
 //UI
 UI::UI(float *sep, float *ali, float *coh)
 {
-    s1 = new Slider(95, 15, 150, 0, 3.5, sep);
-    s2 = new Slider(95, 40, 150, 0, 3.5, ali);
-    s3 = new Slider(95, 65, 150, 0, 3.5, coh);
+    s1 = std::make_unique<Slider>(95, 15, 150, 0, 3.5, sep);
+    s2 = std::make_unique<Slider>(95, 40, 150, 0, 3.5, ali);
+    s3 = std::make_unique<Slider>(95, 65, 150, 0, 3.5, coh);
 }
 
-void UI::handleEvent(sf::Event& event, sf::RenderWindow& window)
+void UI::handleEvent(const sf::Event& event, sf::RenderWindow& window)
 {
     s1->handleEvent(event, window);
     s2->handleEvent(event, window);
